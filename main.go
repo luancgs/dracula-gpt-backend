@@ -1,6 +1,8 @@
 package main
 
 import (
+	"fmt"
+
 	"github.com/gin-gonic/gin"
 	"github.com/gofor-little/env"
 	"github.com/luancgs/dracula-gpt-backend/src/controllers"
@@ -17,11 +19,17 @@ func main() {
 		panic(err)
 	}
 
+	apiPort, err := env.MustGet("PORT")
+	if err != nil {
+		fmt.Println("Error getting API port:", err)
+		return
+	}
+
 	r := gin.Default()
 
 	r.POST("/query", func(ctx *gin.Context) {
 		gptController.CreateQuery(ctx)
 	})
 
-	r.Run(":8080")
+	r.Run(fmt.Sprintf(":%s", apiPort))
 }
