@@ -6,7 +6,7 @@ type GptQuery struct {
 
 type GptRequest struct {
 	Model       string    `json:"model"`
-	Messages    []message `json:"messages"`
+	Messages    []Message `json:"messages"`
 	Temperature float64   `json:"temperature"`
 	N           int64     `json:"n"`
 }
@@ -22,10 +22,10 @@ type GptResponse struct {
 
 type choice struct {
 	Index   int64   `json:"index"`
-	Message message `json:"message"`
+	Message Message `json:"message"`
 }
 
-type message struct {
+type Message struct {
 	Role          string `json:"role"`
 	Content       string `json:"content"`
 	Finish_reason string `json:"finish_reason"`

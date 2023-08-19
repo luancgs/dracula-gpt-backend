@@ -11,7 +11,13 @@ import (
 	"github.com/luancgs/dracula-gpt-backend/src/entities"
 )
 
-const GPT_API_URL = "https://api.openai.com/v1/chat/completions"
+const (
+	GPT_API_URL   = "https://api.openai.com/v1/chat/completions"
+	GPT_MODEL     = "gpt-3.5-turbo"
+	MESSAGE_SETUP = "You are the Dracula."
+	TEMPERATURE   = 0.7
+	N             = 1
+)
 
 type GptService interface {
 	CreateQuery(entities.GptQuery) (string, error)
@@ -31,16 +37,21 @@ func (s *gptService) CreateQuery(gptQuery entities.GptQuery) (string, error) {
 		return "", err
 	}
 
-	jsonInput := fmt.Sprintf(`{
-		"model": "gpt-3.5-turbo",
-		"messages": [{"role": "user", "content": "I want you to speak with me as if you were the Dracula!"}, {"role": "assistant", "content": "Very well. I shall embrace the darkness and speak to you in the voice of Dracula."}, {"role": "user", "content": "%s"}],
-		"temperature": 0.7,
-		"n": 1
-	}`, gptQuery.Prompt)
+	messages := []entities.Message{{Role: "system", Content: MESSAGE_SETUP}, {Role: "user", Content: gptQuery.Prompt}}
 
-	postBody := []byte(jsonInput)
+	jsonInput, err := json.Marshal(entities.GptRequest{
+		Model:       GPT_MODEL,
+		Messages:    messages,
+		Temperature: TEMPERATURE,
+		N:           N,
+	})
 
-	req, err := http.NewRequest("POST", GPT_API_URL, bytes.NewBuffer(postBody))
+	if err != nil {
+		fmt.Println("Error creating JSON:", err)
+		return "", err
+	}
+
+	req, err := http.NewRequest("POST", GPT_API_URL, bytes.NewBuffer(jsonInput))
 	if err != nil {
 		fmt.Println("Error creating request:", err)
 		return "", err
