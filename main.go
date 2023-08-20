@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/gofor-little/env"
 	"github.com/luancgs/dracula-gpt-backend/src/controllers"
@@ -25,11 +26,13 @@ func main() {
 		return
 	}
 
-	r := gin.Default()
+	router := gin.Default()
 
-	r.POST("/query", func(ctx *gin.Context) {
+	router.Use(cors.Default())
+
+	router.POST("/query", func(ctx *gin.Context) {
 		gptController.CreateQuery(ctx)
 	})
 
-	r.Run(fmt.Sprintf(":%s", apiPort))
+	router.Run(fmt.Sprintf(":%s", apiPort))
 }
