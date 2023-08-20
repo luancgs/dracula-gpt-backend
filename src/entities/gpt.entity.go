@@ -11,6 +11,11 @@ type GptRequest struct {
 	N           int64     `json:"n"`
 }
 
+type Message struct {
+	Role    string `json:"role"`
+	Content string `json:"content"`
+}
+
 type GptResponse struct {
 	Id      string   `json:"id"`
 	Object  string   `json:"object"`
@@ -22,10 +27,10 @@ type GptResponse struct {
 
 type choice struct {
 	Index   int64   `json:"index"`
-	Message Message `json:"message"`
+	Message message `json:"message"`
 }
 
-type Message struct {
+type message struct {
 	Role          string `json:"role"`
 	Content       string `json:"content"`
 	Finish_reason string `json:"finish_reason"`
