@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"encoding/json"
 	"io"
 	"net/http"
 
@@ -39,7 +40,17 @@ func (c *gptController) CreateQuery(ctx *gin.Context) {
 		return
 	}
 
-	response, err := c.service.CreateQuery(entities.GptQuery{Prompt: string(requestBody)})
+	query := entities.GptQuery{}
+
+	err = json.Unmarshal(requestBody, &query)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"message": "Request body is not in the right format",
+		})
+		return
+	}
+
+	response, err := c.service.CreateQuery(query)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{
 			"message": "Error creating query",

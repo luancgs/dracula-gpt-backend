@@ -1,7 +1,8 @@
 package entities
 
 type GptQuery struct {
-	Prompt string
+	Prompt  string
+	Context []Message
 }
 
 type GptRequest struct {
